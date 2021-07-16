@@ -6,7 +6,7 @@ import os
 import imghdr
 import tempfile
 from PIL import Image, ImageOps
-import emotion_calssify as EC
+import emotion_classify as EC
 from classify import recommend
 import fetching_playlists as fp
 #[theme]
