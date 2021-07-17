@@ -1,21 +1,56 @@
-
-
-import json
-import pandas as pd
+import base64
+import requests
+import datetime
 import spotipy
+import spotipy.oauth2 as oauth2
+from spotipy.oauth2 import SpotifyOAuth
 from spotipy.oauth2 import SpotifyClientCredentials
+import pandas as pd
+import numpy as np
 
-playlist_uri = 'spotify:playlist:2e0yQbvDNb9ARfojbE4Wze'
-spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials('f7a43754c96842d0abe4714b5d46b5b8','b220dc8a84284d15960df4b2460255ee'))
+auth_manager=SpotifyClientCredentials(client_id='f7a43754c96842d0abe4714b5d46b5b8',
+client_secret='b220dc8a84284d15960df4b2460255ee')
 
-
-
+sp=spotipy.Spotify(auth_manager=auth_manager)
+ids=['6RUKPb4LETWmmr3iAEQktW', '0tgVpDi06FyKpA1z0VMD4v', '2r6OAV3WsYtXuXjvJ1lIDi']
+df = pd.DataFrame(columns=['Name', 'Album', 'Artist', 'Release_date', 'Popularity', 'Acousticness', 'Danceability', 'Energy',
+                                     'Instrumentalness', 'Liveness', 'Loudness',
+                                     'Speechiness', 'Tempo', 'Time_signature', 'Valence', 'Length', 'Key', 'Mode'])
+                                     
 def give_data():
-        playlist = spotify.playlist(playlist_uri)
-        pd.json_normalize(playlist)
-        playlist_items = spotify.playlist_items(playlist_uri)
-        df = pd.json_normalize(playlist_items['items'])
-        filter_cols = [col for col in df if col.startswith('track')]
-        df = df[filter_cols]
-        df.columns = [col.replace("track.","") for col in df]
-        return df
+        for id in ids:
+          track_info= sp.track(id)
+          track_features = sp.audio_features(id)
+          name= track_info['name']
+          album = track_info['album']['name']
+          artist = track_info['album']['name']
+          release_date = track_info['album']['release_date']
+          popularity= track_info['popularity']
+          acousticness = track_features[0]['acousticness']
+          danceability= track_features[0]['danceability']
+          energy= track_features[0]['energy']
+          instrumentalness= track_features[0]['instrumentalness']
+          liveness= track_features[0]['liveness']
+          loudness= track_features[0]['loudness']
+          speechiness= track_features[0]['speechiness']
+          tempo= track_features[0]['tempo']
+          time_signature= track_features[0]['time_signature']
+          valence= track_features[0]['valence']
+          length= track_features[0]['duration_ms']
+          key= track_features[0]['key']
+          mode= track_features[0]['mode']
+          track=[name, album, artist, release_date, popularity, acousticness,
+               danceability, energy, instrumentalness, liveness, loudness,
+               speechiness,tempo, time_signature, valence, length, key, mode]
+          track
+          df = df.append({
+                          'Name':name, 'Album':album, 'Artist':artist, 'Release_date':release_date, 'Popularity':popularity,
+                          'Acousticness':acousticness, 'Danceability':danceability, 'Energy':energy,
+                                             'Instrumentalness':instrumentalness, 'Liveness':liveness, 'Loudness':loudness,
+                                             'Speechiness':speechiness, 'Tempo':tempo, 'Time_signature':time_signature, 'Valence':valence,
+                           'Length':length, 'Key': key, 'Mode':mode
+                           }
+                           ,ignore_index=True
+                          )
+    return df
+
