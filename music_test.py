@@ -17,7 +17,7 @@ scaler = load(open('scaler.pkl', 'rb'))
 emotions = ["Calm", "Energetic", "Happy", "Sad"]
 
 def recommend_music(hist, mood):
-    x = hist[["danceability", "acousticness", "energy", "instrumentalness", "valence", "loudness", "speechiness"]]
+    x = hist[["Danceability", "Acousticness", "Energy", "Instrumentalness", "Valence", "Loudness", "Speechiness"]]
     x = scaler.transform(x)
     predictions = model.predict(x)
     index_moods = np.argmax(predictions, axis =1)
