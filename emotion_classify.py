@@ -8,6 +8,7 @@ emotions = ["Happy", "Sad", "Calm", "Energetic"]
 
 def emotion_detect(frame):
     frame = cv2.resize(frame, (250, 250))
+    frame=np.float32(frame)
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces  = detector.detect_faces(frame)
 
